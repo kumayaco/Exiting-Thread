@@ -8,15 +8,55 @@
 
 #import "VCAppDelegate.h"
 
+@interface VCAppDelegate ()
+
+@property (nonatomic, strong) NSThread *myThread;
+
+@end
+
 @implementation VCAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    self.myThread = [[NSThread alloc] initWithTarget:self
+                                            selector:@selector(threadEntryPoint)
+                                              object:nil];
+    
+    [self performSelector:@selector(stopThread) withObject:nil afterDelay:3.0f];
+    
+    [self.myThread start];
+    
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     return YES;
+}
+
+#pragma mark - Thread Operations
+
+- (void)threadEntryPoint
+{
+    @autoreleasepool {
+        NSLog(@"Thread Entry Point");
+        
+        while ([[NSThread currentThread] isCancelled] == NO) {
+            
+            [NSThread sleepForTimeInterval:4.0f];
+            
+            NSLog(@"Thread Loop");
+        }
+        
+        NSLog(@"Thread Finished");
+    }
+}
+
+- (void)stopThread {
+    NSLog(@"Thread Canceling");
+    [self.myThread cancel];
+    
+    NSLog(@"Thread Releasing");
+    self.myThread = nil;
 }
 
 @end
