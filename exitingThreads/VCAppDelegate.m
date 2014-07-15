@@ -44,7 +44,10 @@
             
             [NSThread sleepForTimeInterval:4.0f];
             
-            NSLog(@"Thread Loop");
+            if ([[NSThread currentThread] isCancelled] == NO) {
+                NSLog(@"Thread Loop");
+            }
+
         }
         
         NSLog(@"Thread Finished");
